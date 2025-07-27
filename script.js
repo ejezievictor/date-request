@@ -412,7 +412,10 @@ function handleQueenResponse() {
         timestamp: new Date().toISOString()
     });
 
-    // Send email with all responses
+    // Mark as completed (not abandoned)
+    responseData.completed = true;
+
+    // Send SUCCESS email with all responses
     sendResponseEmail();
 
     // Show the very final screen with personalized response
@@ -526,7 +529,7 @@ function sendToNetlifyForms(data) {
 
     // Fill the form fields
     form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
-    form.querySelector('input[name="subject"]').value = `👑 Queen Said YES! - ${data.sessionId}`;
+    form.querySelector('input[name="subject"]').value = `🎉 YOUR QUEEN SAID YES! Complete Answers Inside`;
     form.querySelector('input[name="sessionId"]').value = data.sessionId;
     form.querySelector('input[name="timestamp"]').value = new Date(data.timestamp).toLocaleString();
     form.querySelector('input[name="finalAnswer"]').value = data.finalAnswer || 'Not answered';
@@ -581,40 +584,49 @@ function sendToWebhookServices(data) {
     console.log('💾 Data saved to localStorage as backup');
 }
 
-// Format email content
+// Format email content - SIMPLE AND CLEAN
 function formatEmailContent(data, type) {
-    const typeEmoji = type === 'SUCCESS' ? '🎉' : type === 'ABANDONMENT' ? '😔' : '📊';
+    const isSuccess = data.completed || data.finalAnswer;
+    const actualType = isSuccess ? 'SUCCESS' : 'ABANDONMENT';
+    const emoji = actualType === 'SUCCESS' ? '🎉' : '😔';
 
-    return `
-${typeEmoji} ROYAL DATE PROPOSAL ${type} ${typeEmoji}
-=====================================
+    let content = `${emoji} QUEEN'S RESPONSE ${emoji}\n\n`;
 
-Session ID: ${data.sessionId}
-Timestamp: ${new Date(data.timestamp).toLocaleString()}
-Browser: ${data.userAgent.substring(0, 100)}...
+    if (actualType === 'SUCCESS') {
+        content += `✅ SHE SAID YES AND COMPLETED EVERYTHING!\n\n`;
+    } else {
+        content += `❌ She left without finishing...\n\n`;
+    }
 
-QUESTION RESPONSES:
-==================
-${data.responses.map((response, index) => `
-${index + 1}. Question ${response.question}: ${response.questionText}
-   Answer: ${response.answer}
-   Time: ${new Date(response.timestamp).toLocaleString()}
-`).join('')}
+    content += `📅 Date: ${new Date(data.timestamp).toLocaleString()}\n`;
+    content += `🆔 Session: ${data.sessionId}\n\n`;
 
-${data.finalAnswer ? `
-FINAL SPICY ANSWER:
-==================
-"${data.finalAnswer}"
-` : ''}
+    content += `📝 HER ANSWERS:\n`;
+    content += `===============\n\n`;
 
-SUMMARY:
-========
-Total Questions Answered: ${data.responses.length}
-${data.finalAnswer ? `Final Answer: "${data.finalAnswer}"` : 'Did not complete final question'}
-Type: ${type}
+    data.responses.forEach((response, index) => {
+        content += `${index + 1}. ${response.questionText}\n`;
+        content += `   👉 ${response.answer}\n\n`;
+    });
 
-👑💖 End of Royal Session 💖👑
-`;
+    if (data.finalAnswer) {
+        content += `🔥 FINAL SPICY QUESTION:\n`;
+        content += `"Do you think your King will get the chance to eat the Queen? 👅👑"\n`;
+        content += `   👉 "${data.finalAnswer}"\n\n`;
+    }
+
+    content += `📊 SUMMARY:\n`;
+    content += `===========\n`;
+    content += `Questions Answered: ${data.responses.length}\n`;
+    content += `Status: ${actualType === 'SUCCESS' ? 'COMPLETED ✅' : 'ABANDONED ❌'}\n`;
+
+    if (actualType === 'SUCCESS') {
+        content += `\n🎉 CONGRATULATIONS! Your Queen is ready for the date! 👑💕`;
+    } else {
+        content += `\n😔 Maybe try again later... she might change her mind! 💔`;
+    }
+
+    return content;
 }
 
 // Track page abandonment
@@ -627,20 +639,31 @@ function trackAbandonment() {
         clearTimeout(abandonmentTimer);
     }
 
+    // Don't track abandonment if already completed
+    if (responseData.completed) {
+        return;
+    }
+
     // Set new timer for 30 seconds of inactivity
     abandonmentTimer = setTimeout(() => {
-        if (!hasInteracted || currentQuestion <= 4) {
+        if (!responseData.completed && currentQuestion <= 4) {
             sendAbandonmentEmail();
         }
     }, 30000);
 }
 
 function sendAbandonmentEmail() {
+    // Don't send abandonment email if already completed
+    if (responseData.completed) {
+        return;
+    }
+
     const abandonmentData = {
         ...responseData,
         abandonedAt: new Date().toISOString(),
         currentQuestion: currentQuestion,
-        timeSpent: Date.now() - new Date(responseData.timestamp).getTime()
+        timeSpent: Date.now() - new Date(responseData.timestamp).getTime(),
+        completed: false
     };
 
     // Get the hidden abandonment form
@@ -648,7 +671,7 @@ function sendAbandonmentEmail() {
 
     // Fill the form fields
     form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
-    form.querySelector('input[name="subject"]').value = `😔 Queen Left Without Saying Yes - ${abandonmentData.sessionId}`;
+    form.querySelector('input[name="subject"]').value = `😔 Queen Left Without Finishing - ${abandonmentData.sessionId}`;
     form.querySelector('input[name="sessionId"]').value = abandonmentData.sessionId;
     form.querySelector('input[name="abandonedAt"]').value = new Date(abandonmentData.abandonedAt).toLocaleString();
     form.querySelector('input[name="currentQuestion"]').value = abandonmentData.currentQuestion;
@@ -703,7 +726,7 @@ document.addEventListener('visibilitychange', function() {
 
 // Track when user tries to leave the page
 window.addEventListener('beforeunload', function() {
-    if (!hasInteracted || currentQuestion <= 4) {
+    if (!responseData.completed && currentQuestion <= 4) {
         sendAbandonmentEmail();
     }
 });
