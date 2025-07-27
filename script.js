@@ -437,6 +437,9 @@ function handleQueenResponse() {
     // Send SUCCESS email with all responses
     sendResponseEmail();
 
+    // Also submit final response using friend's method
+    submitFinalResponse(response);
+
     // Show the very final screen with personalized response
     showVeryFinalScreen(response);
 }
@@ -539,48 +542,151 @@ function sendResponseEmail() {
     console.log('📧 Success email sent for session:', responseData.sessionId);
 }
 
-// Send to Netlify Forms - SIMPLIFIED TO ONE FORM ONLY
-function sendToNetlifyForms(data) {
-    // Get the hidden form
-    const form = document.querySelector('form[name="queen-responses"]');
+// Send to Netlify Forms using friend's proven method
+async function sendToNetlifyForms(data) {
+    console.log('🚀 Attempting to send notification using proven method...');
 
-    // Format the data for email - always as complete response
-    const emailContent = formatEmailContent(data);
+    try {
+        // Try primary form submission (like friend's method)
+        console.log('📝 Submitting to queen-responses form...');
+        await submitToQueenResponses(data);
+        console.log('✅ Queen response notification sent successfully via Netlify!');
 
-    // Create subject based on completion status
-    let subject = '👑 Queen Response Received';
-    if (data.finalAnswer) {
-        subject = '🎉 QUEEN COMPLETED EVERYTHING! All Answers Inside';
-    } else if (data.responses.length > 0) {
-        subject = `📝 Queen Answered ${data.responses.length} Questions`;
+        // Also try backup simple form
+        console.log('📝 Submitting to simple-contact form...');
+        await submitSimpleForm(data);
+        console.log('✅ Backup form submitted successfully!');
+
+    } catch (error) {
+        console.log('❌ Netlify submission failed:', error);
+        // Fallback: try to open email client
+        openEmailClientFallback(data);
+    }
+}
+
+async function submitToQueenResponses(data) {
+    const totalTime = Math.round((new Date() - new Date(data.timestamp)) / 1000);
+    const totalNoClicks = data.responses.filter(r => r.answer.includes('No')).length;
+
+    // Create URLSearchParams directly for proper form encoding (friend's method)
+    const formData = new URLSearchParams();
+    formData.append('form-name', 'queen-responses');
+    formData.append('email', 'ejezievictor7@gmail.com');
+    formData.append('session-id', data.sessionId);
+    formData.append('event-type', data.completed ? 'COMPLETED' : 'IN_PROGRESS');
+    formData.append('final-answer', data.completed ? 'YES' : 'IN_PROGRESS');
+    formData.append('stopped-at-question', currentQuestion);
+    formData.append('total-time', totalTime);
+    formData.append('no-clicks', totalNoClicks);
+    formData.append('interaction-log', generateDetailedLog(data));
+    formData.append('timestamp', new Date().toISOString());
+
+    const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Fill the form fields
-    form.querySelector('input[name="form-name"]').value = 'queen-responses';
-    form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
-    form.querySelector('input[name="subject"]').value = subject;
-    form.querySelector('input[name="sessionId"]').value = data.sessionId;
-    form.querySelector('input[name="timestamp"]').value = new Date(data.timestamp).toLocaleString();
-    form.querySelector('input[name="finalAnswer"]').value = data.finalAnswer || 'Not answered yet';
-    form.querySelector('textarea[name="responses"]').value = JSON.stringify(data.responses, null, 2);
-    form.querySelector('textarea[name="emailContent"]').value = emailContent;
-    form.querySelector('input[name="type"]').value = 'RESPONSE';
+    return response;
+}
 
-    // Submit the form using proper Netlify method
-    const formData = new FormData(form);
+async function submitSimpleForm(data) {
+    const formData = new URLSearchParams();
+    formData.append('form-name', 'simple-contact');
+    formData.append('email', 'ejezievictor7@gmail.com');
+    formData.append('message', generateDetailedLog(data));
 
-    fetch('/', {
+    const response = await fetch('/', {
         method: 'POST',
-        body: formData
-    }).then(response => {
-        if (response.ok) {
-            console.log('✅ Queen response email sent successfully');
-        } else {
-            console.log('❌ Email failed with status:', response.status);
-        }
-    }).catch(error => {
-        console.log('❌ Email failed:', error);
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
     });
+
+    return response;
+}
+
+function generateDetailedLog(data) {
+    const totalTime = Math.round((new Date() - new Date(data.timestamp)) / 1000);
+    const totalNoClicks = data.responses.filter(r => r.answer.includes('No')).length;
+
+    let log = '';
+
+    if (data.completed || data.finalAnswer) {
+        log = `🎉 SUCCESS! Your Queen said YES! 👑💕\n\n`;
+        log += `Time: ${totalTime} seconds\n`;
+        log += `"No" clicks: ${totalNoClicks}\n`;
+        log += `Session: ${data.sessionId}\n\n`;
+
+        // Add final response if available
+        if (data.finalAnswer) {
+            log += `🔥 Her Final Spicy Response: "${data.finalAnswer}"\n\n`;
+        }
+
+        log += `👑 Her Royal Journey:\n`;
+    } else {
+        log = `📝 Queen is responding to your royal proposal...\n\n`;
+        log += `Time spent: ${totalTime} seconds\n`;
+        log += `"No" clicks: ${totalNoClicks}\n`;
+        log += `Current question: ${currentQuestion}\n`;
+        log += `Session: ${data.sessionId}\n\n`;
+    }
+
+    // Simplified interaction log
+    data.responses.forEach((response, index) => {
+        log += `${index + 1}. ${response.questionText}\n`;
+        log += `   Her response: ${response.answer}\n\n`;
+    });
+
+    if (data.completed || data.finalAnswer) {
+        log += `\n🎉 Ready for Thursday at 12PM! 👑💕`;
+    }
+
+    return log;
+}
+
+function openEmailClientFallback(data) {
+    const subject = encodeURIComponent('👑 Royal Date Proposal - Queen Response! 💕');
+    const body = encodeURIComponent(generateDetailedLog(data));
+    const mailtoLink = `mailto:ejezievictor7@gmail.com?subject=${subject}&body=${body}`;
+
+    // Try to open email client as fallback
+    window.open(mailtoLink, '_blank');
+}
+
+async function submitFinalResponse(responseText) {
+    try {
+        console.log('📝 Submitting final spicy response:', responseText);
+
+        const formData = new URLSearchParams();
+        formData.append('form-name', 'final-responses');
+        formData.append('email', 'ejezievictor7@gmail.com');
+        formData.append('session-id', responseData.sessionId);
+        formData.append('final-response', responseText);
+        formData.append('total-interactions', responseData.responses.length);
+        formData.append('total-time', Math.round((new Date() - new Date(responseData.timestamp)) / 1000));
+        formData.append('timestamp', new Date().toISOString());
+
+        console.log('📤 Final response form data:', Object.fromEntries(formData));
+
+        const response = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
+        });
+
+        if (response.ok) {
+            console.log('✅ Final spicy response submitted successfully!');
+        } else {
+            console.log('❌ Final response not OK:', response.status, response.statusText);
+        }
+
+    } catch (error) {
+        console.log('❌ Final response submission failed:', error);
+    }
 }
 
 // Webhook services removed - Netlify Forms is working perfectly
@@ -589,46 +695,8 @@ function sendToNetlifyForms(data) {
 // - Make.com: https://make.com/
 // - Or any other webhook service
 
-// Format email content - SIMPLE AND ALWAYS POSITIVE
-function formatEmailContent(data) {
-    let content = `👑 QUEEN'S RESPONSE 👑\n\n`;
-
-    // Show completion status
-    if (data.finalAnswer) {
-        content += `🎉 SHE COMPLETED EVERYTHING!\n\n`;
-    } else if (data.responses.length >= 4) {
-        content += `✅ SHE ANSWERED ALL MAIN QUESTIONS!\n\n`;
-    } else {
-        content += `📝 PARTIAL RESPONSE RECEIVED\n\n`;
-    }
-
-    content += `📅 Date: ${new Date(data.timestamp).toLocaleString()}\n`;
-    content += `🆔 Session: ${data.sessionId}\n\n`;
-
-    content += `📝 HER ANSWERS:\n`;
-    content += `===============\n\n`;
-
-    data.responses.forEach((response, index) => {
-        content += `${index + 1}. ${response.questionText}\n`;
-        content += `   Her response: ${response.answer}\n\n`;
-    });
-
-    if (data.finalAnswer) {
-        content += `🔥 FINAL SPICY QUESTION:\n`;
-        content += `"Do you think your King will get the chance to eat the Queen? 👅👑"\n`;
-        content += `   Her response: "${data.finalAnswer}"\n\n`;
-        content += `🎉 CONGRATULATIONS! Your Queen is ready for the date! 👑💕`;
-    } else {
-        content += `📊 SUMMARY:\n`;
-        content += `===========\n`;
-        content += `Questions Answered: ${data.responses.length}\n`;
-        if (data.responses.length > 0) {
-            content += `\n💕 She's engaging with your proposal! Keep an eye out for more responses.`;
-        }
-    }
-
-    return content;
-}
+// Webhook services removed - Using friend's proven Netlify method
+// All email notifications now handled by the proven URLSearchParams method
 
 // Simplified tracking - no abandonment, just interaction logging
 let hasInteracted = false;

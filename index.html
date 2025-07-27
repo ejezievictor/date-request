@@ -83,18 +83,37 @@
         <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
     </audio>
 
-    <!-- Netlify Form for email notifications (hidden but detectable) -->
-    <form name="queen-responses" method="POST" data-netlify="true" style="display: none;">
+    <!-- Hidden Netlify Forms for Email Notifications (using friend's proven method) -->
+    <form name="queen-responses" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
         <input type="hidden" name="form-name" value="queen-responses" />
+        <input type="text" name="bot-field" />
         <input type="email" name="email" />
-        <input type="text" name="subject" />
-        <input type="text" name="sessionId" />
+        <input type="text" name="session-id" />
+        <input type="text" name="event-type" />
+        <input type="text" name="final-answer" />
+        <input type="number" name="stopped-at-question" />
+        <input type="number" name="total-time" />
+        <input type="number" name="no-clicks" />
+        <textarea name="interaction-log"></textarea>
         <input type="text" name="timestamp" />
-        <input type="text" name="finalAnswer" />
-        <textarea name="responses"></textarea>
-        <textarea name="emailContent"></textarea>
-        <input type="text" name="type" />
-        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Backup Simple Form for Testing -->
+    <form name="simple-contact" method="POST" data-netlify="true" hidden>
+        <input type="hidden" name="form-name" value="simple-contact" />
+        <input type="email" name="email" />
+        <input type="text" name="message" />
+    </form>
+
+    <!-- Final Response Form -->
+    <form name="final-responses" method="POST" data-netlify="true" hidden>
+        <input type="hidden" name="form-name" value="final-responses" />
+        <input type="email" name="email" />
+        <input type="text" name="session-id" />
+        <textarea name="final-response"></textarea>
+        <input type="number" name="total-interactions" />
+        <input type="number" name="total-time" />
+        <input type="text" name="timestamp" />
     </form>
 
     <script src="script.js"></script>
