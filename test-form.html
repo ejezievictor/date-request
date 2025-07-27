@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Netlify Forms</title>
+</head>
+<body>
+    <h1>Test Netlify Forms Detection</h1>
+    
+    <!-- Test form to ensure Netlify detects forms -->
+    <form name="test-form" netlify>
+        <p>
+            <label>Name: <input type="text" name="name" /></label>
+        </p>
+        <p>
+            <label>Email: <input type="email" name="email" /></label>
+        </p>
+        <p>
+            <button type="submit">Test Submit</button>
+        </p>
+    </form>
+    
+    <!-- Queen Response Form (visible for detection) -->
+    <form name="queen-responses" netlify>
+        <input type="hidden" name="form-name" value="queen-responses" />
+        <p>
+            <label>Email: <input type="email" name="email" value="ejezievictor7@gmail.com" /></label>
+        </p>
+        <p>
+            <label>Subject: <input type="text" name="subject" /></label>
+        </p>
+        <p>
+            <label>Session ID: <input type="text" name="sessionId" /></label>
+        </p>
+        <p>
+            <label>Timestamp: <input type="text" name="timestamp" /></label>
+        </p>
+        <p>
+            <label>Final Answer: <input type="text" name="finalAnswer" /></label>
+        </p>
+        <p>
+            <label>Responses: <textarea name="responses"></textarea></label>
+        </p>
+        <p>
+            <label>Email Content: <textarea name="emailContent"></textarea></label>
+        </p>
+        <p>
+            <label>Type: <input type="text" name="type" /></label>
+        </p>
+        <p>
+            <button type="submit">Submit Queen Response</button>
+        </p>
+    </form>
+    
+    <!-- Queen Abandonment Form (visible for detection) -->
+    <form name="queen-abandonment" netlify>
+        <input type="hidden" name="form-name" value="queen-abandonment" />
+        <p>
+            <label>Email: <input type="email" name="email" value="ejezievictor7@gmail.com" /></label>
+        </p>
+        <p>
+            <label>Subject: <input type="text" name="subject" /></label>
+        </p>
+        <p>
+            <label>Session ID: <input type="text" name="sessionId" /></label>
+        </p>
+        <p>
+            <label>Abandoned At: <input type="text" name="abandonedAt" /></label>
+        </p>
+        <p>
+            <label>Current Question: <input type="text" name="currentQuestion" /></label>
+        </p>
+        <p>
+            <label>Time Spent: <input type="text" name="timeSpent" /></label>
+        </p>
+        <p>
+            <label>Responses: <textarea name="responses"></textarea></label>
+        </p>
+        <p>
+            <label>Email Content: <textarea name="emailContent"></textarea></label>
+        </p>
+        <p>
+            <label>Type: <input type="text" name="type" /></label>
+        </p>
+        <p>
+            <button type="submit">Submit Abandonment</button>
+        </p>
+    </form>
+    
+    <p><a href="index.html">← Back to Queen Proposal</a></p>
+</body>
+</html>

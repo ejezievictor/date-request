@@ -80,28 +80,30 @@
         <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
     </audio>
 
-    <!-- Hidden Netlify Forms for email notifications -->
-    <form name="queen-responses" netlify hidden>
-        <input type="email" name="email">
-        <input type="text" name="subject">
-        <input type="text" name="sessionId">
-        <input type="text" name="timestamp">
-        <input type="text" name="finalAnswer">
+    <!-- Netlify Forms for email notifications (hidden but detectable) -->
+    <form name="queen-responses" netlify style="display: none;">
+        <input type="email" name="email" />
+        <input type="text" name="subject" />
+        <input type="text" name="sessionId" />
+        <input type="text" name="timestamp" />
+        <input type="text" name="finalAnswer" />
         <textarea name="responses"></textarea>
         <textarea name="emailContent"></textarea>
-        <input type="text" name="type">
+        <input type="text" name="type" />
+        <button type="submit">Submit</button>
     </form>
 
-    <form name="queen-abandonment" netlify hidden>
-        <input type="email" name="email">
-        <input type="text" name="subject">
-        <input type="text" name="sessionId">
-        <input type="text" name="abandonedAt">
-        <input type="text" name="currentQuestion">
-        <input type="text" name="timeSpent">
+    <form name="queen-abandonment" netlify style="display: none;">
+        <input type="email" name="email" />
+        <input type="text" name="subject" />
+        <input type="text" name="sessionId" />
+        <input type="text" name="abandonedAt" />
+        <input type="text" name="currentQuestion" />
+        <input type="text" name="timeSpent" />
         <textarea name="responses"></textarea>
         <textarea name="emailContent"></textarea>
-        <input type="text" name="type">
+        <input type="text" name="type" />
+        <button type="submit">Submit</button>
     </form>
 
     <script src="script.js"></script>

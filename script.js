@@ -518,20 +518,24 @@ function sendResponseEmail() {
 
 // Send to Netlify Forms for automatic email notifications
 function sendToNetlifyForms(data) {
-    const formData = new FormData();
+    // Get the hidden form
+    const form = document.querySelector('form[name="queen-responses"]');
 
     // Format the data for email
     const emailContent = formatEmailContent(data, 'SUCCESS');
 
-    formData.append('form-name', 'queen-responses');
-    formData.append('email', 'ejezievictor7@gmail.com');
-    formData.append('subject', `👑 Queen Said YES! - ${data.sessionId}`);
-    formData.append('sessionId', data.sessionId);
-    formData.append('timestamp', new Date(data.timestamp).toLocaleString());
-    formData.append('finalAnswer', data.finalAnswer || 'Not answered');
-    formData.append('responses', JSON.stringify(data.responses, null, 2));
-    formData.append('emailContent', emailContent);
-    formData.append('type', 'SUCCESS');
+    // Fill the form fields
+    form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
+    form.querySelector('input[name="subject"]').value = `👑 Queen Said YES! - ${data.sessionId}`;
+    form.querySelector('input[name="sessionId"]').value = data.sessionId;
+    form.querySelector('input[name="timestamp"]').value = new Date(data.timestamp).toLocaleString();
+    form.querySelector('input[name="finalAnswer"]').value = data.finalAnswer || 'Not answered';
+    form.querySelector('textarea[name="responses"]').value = JSON.stringify(data.responses, null, 2);
+    form.querySelector('textarea[name="emailContent"]').value = emailContent;
+    form.querySelector('input[name="type"]').value = 'SUCCESS';
+
+    // Submit the form
+    const formData = new FormData(form);
 
     fetch('/', {
         method: 'POST',
@@ -639,18 +643,22 @@ function sendAbandonmentEmail() {
         timeSpent: Date.now() - new Date(responseData.timestamp).getTime()
     };
 
-    // Send abandonment notification
-    const formData = new FormData();
-    formData.append('form-name', 'queen-abandonment');
-    formData.append('email', 'ejezievictor7@gmail.com');
-    formData.append('subject', `😔 Queen Left Without Saying Yes - ${abandonmentData.sessionId}`);
-    formData.append('sessionId', abandonmentData.sessionId);
-    formData.append('abandonedAt', new Date(abandonmentData.abandonedAt).toLocaleString());
-    formData.append('currentQuestion', abandonmentData.currentQuestion);
-    formData.append('timeSpent', Math.round(abandonmentData.timeSpent / 1000) + ' seconds');
-    formData.append('responses', JSON.stringify(abandonmentData.responses, null, 2));
-    formData.append('emailContent', formatEmailContent(abandonmentData, 'ABANDONMENT'));
-    formData.append('type', 'ABANDONMENT');
+    // Get the hidden abandonment form
+    const form = document.querySelector('form[name="queen-abandonment"]');
+
+    // Fill the form fields
+    form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
+    form.querySelector('input[name="subject"]').value = `😔 Queen Left Without Saying Yes - ${abandonmentData.sessionId}`;
+    form.querySelector('input[name="sessionId"]').value = abandonmentData.sessionId;
+    form.querySelector('input[name="abandonedAt"]').value = new Date(abandonmentData.abandonedAt).toLocaleString();
+    form.querySelector('input[name="currentQuestion"]').value = abandonmentData.currentQuestion;
+    form.querySelector('input[name="timeSpent"]').value = Math.round(abandonmentData.timeSpent / 1000) + ' seconds';
+    form.querySelector('textarea[name="responses"]').value = JSON.stringify(abandonmentData.responses, null, 2);
+    form.querySelector('textarea[name="emailContent"]').value = formatEmailContent(abandonmentData, 'ABANDONMENT');
+    form.querySelector('input[name="type"]').value = 'ABANDONMENT';
+
+    // Submit the form
+    const formData = new FormData(form);
 
     fetch('/', {
         method: 'POST',
