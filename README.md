@@ -14,9 +14,17 @@ A playful, interactive webpage designed to ask your special someone out on a dat
 
 ## 🚀 How to Use
 
+### Local Development
 1. Open `index.html` in any modern web browser
-2. Share the link with your Queen
-3. Watch the magic happen! ✨
+2. Or run a local server: `python -m http.server 8080`
+3. Share the link with your Queen
+4. Watch the magic happen! ✨
+
+### Deploy to Netlify
+1. Connect this GitHub repository to Netlify
+2. Deploy settings: Build command: `echo 'Static site'`, Publish directory: `.`
+3. Enable form notifications in Netlify dashboard
+4. Your Queen can access it from anywhere!
 
 ## 📱 Question Flow
 

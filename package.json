@@ -1,0 +1,23 @@
+{
+  "name": "royal-date-proposal",
+  "version": "1.0.0",
+  "description": "Interactive Queen Dating App with 3D Animations and Automated Email Tracking",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Static site - open index.html in browser'",
+    "build": "echo 'No build process needed for static site'"
+  },
+  "keywords": [
+    "date-proposal",
+    "interactive",
+    "3d-animation",
+    "royal",
+    "queen",
+    "romance"
+  ],
+  "author": "ejezievictor",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
