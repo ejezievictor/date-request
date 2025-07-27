@@ -632,13 +632,13 @@ function formatEmailContent(data) {
 
     data.responses.forEach((response, index) => {
         content += `${index + 1}. ${response.questionText}\n`;
-        content += `   👉 ${response.answer}\n\n`;
+        content += `   Her response: ${response.answer}\n\n`;
     });
 
     if (data.finalAnswer) {
         content += `🔥 FINAL SPICY QUESTION:\n`;
         content += `"Do you think your King will get the chance to eat the Queen? 👅👑"\n`;
-        content += `   👉 "${data.finalAnswer}"\n\n`;
+        content += `   Her response: "${data.finalAnswer}"\n\n`;
         content += `🎉 CONGRATULATIONS! Your Queen is ready for the date! 👑💕`;
     } else {
         content += `📊 SUMMARY:\n`;
