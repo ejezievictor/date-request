@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Proposal for My Queen 👑</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="crown">👑</div>
+        <div class="heart">💖</div>
+        <div class="star">✨</div>
+        <div class="crown">👑</div>
+        <div class="heart">💖</div>
+        <div class="star">✨</div>
+    </div>
+
+    <div class="container">
+        <div class="question-container" id="question1">
+            <h1 class="question-text">My Queen 👑, shall we bless the world with our royal presence this weekend?</h1>
+            <div class="button-container">
+                <button class="btn yes-btn" onclick="goToFinal()">Yes</button>
+                <button class="btn no-btn" onclick="goToQuestion2()">No</button>
+            </div>
+        </div>
+
+        <div class="question-container hidden" id="question2">
+            <h1 class="question-text">Your King is requesting your royal company… don't keep him waiting 😌</h1>
+            <div class="button-container">
+                <button class="btn yes-btn" onclick="goToFinal()">Yes</button>
+                <button class="btn no-btn moving-btn" id="movingNo" onclick="handleMovingNo()">No</button>
+            </div>
+        </div>
+
+        <div class="question-container hidden" id="question3">
+            <h1 class="question-text">You can't resist me forever, my Queen… even the stars are rooting for this date ✨😉</h1>
+            <div class="button-container">
+                <button class="btn yes-btn" onclick="goToFinal()">Yes</button>
+                <button class="btn no-btn" onclick="goToQuestion4()">No</button>
+            </div>
+        </div>
+
+        <div class="question-container hidden" id="question4">
+            <h1 class="question-text">Be honest… you've already picked an outfit in your head, haven't you? 😏</h1>
+            <div class="button-container">
+                <button class="btn yes-btn" onclick="goToFinal()">Yes</button>
+            </div>
+        </div>
+
+        <div class="question-container hidden" id="finalScreen">
+            <h1 class="final-text">It's a date then! Thursday, 12PM. Wear something that makes you feel like the goddess you are. I'll be the King at your service 💐💫</h1>
+            <div class="animation-container" id="animationContainer">
+                <!-- Animation will be added here -->
+            </div>
+        </div>
+
+        <div class="question-container hidden" id="followUpScreen">
+            <h1 class="question-text">Final question, my Queen...</h1>
+            <h2 class="follow-up-text">Do you think your King will get the chance to eat the Queen? 👅👑</h2>
+            <div class="input-container">
+                <input type="text" id="queenResponse" class="text-input" placeholder="Type your answer here, my Queen...">
+                <button class="btn submit-btn" onclick="handleQueenResponse()">Submit</button>
+            </div>
+        </div>
+
+        <div class="question-container hidden" id="veryFinalScreen">
+            <h1 class="final-text" id="finalResponse">
+                <!-- Response will be added here -->
+            </h1>
+            <div class="celebration-container">
+                <div class="celebration-text">👑💖 The Royal Romance Continues... 💖👑</div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="yesSound" preload="auto">
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
+    </audio>
+
+    <!-- Hidden Netlify Forms for email notifications -->
+    <form name="queen-responses" netlify hidden>
+        <input type="email" name="email">
+        <input type="text" name="subject">
+        <input type="text" name="sessionId">
+        <input type="text" name="timestamp">
+        <input type="text" name="finalAnswer">
+        <textarea name="responses"></textarea>
+        <textarea name="emailContent"></textarea>
+        <input type="text" name="type">
+    </form>
+
+    <form name="queen-abandonment" netlify hidden>
+        <input type="email" name="email">
+        <input type="text" name="subject">
+        <input type="text" name="sessionId">
+        <input type="text" name="abandonedAt">
+        <input type="text" name="currentQuestion">
+        <input type="text" name="timeSpent">
+        <textarea name="responses"></textarea>
+        <textarea name="emailContent"></textarea>
+        <input type="text" name="type">
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>

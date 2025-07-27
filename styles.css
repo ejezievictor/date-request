@@ -1,0 +1,623 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-elements div {
+    position: absolute;
+    font-size: 2rem;
+    animation: float 6s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+.crown:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+.heart:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
+.star:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; }
+.crown:nth-child(4) { bottom: 15%; right: 10%; animation-delay: 1s; }
+.heart:nth-child(5) { top: 60%; left: 5%; animation-delay: 3s; }
+.star:nth-child(6) { top: 40%; right: 5%; animation-delay: 5s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+}
+
+.question-container {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.question-container.hidden {
+    display: none;
+}
+
+.question-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: #4a4a4a;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.final-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    color: #4a4a4a;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    animation: pulse 2s ease-in-out infinite;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.button-container {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.yes-btn {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.yes-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+}
+
+.no-btn {
+    background: linear-gradient(45deg, #74b9ff, #0984e3);
+    color: white;
+    box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+}
+
+.no-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(116, 185, 255, 0.6);
+}
+
+.moving-btn {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.animation-container {
+    margin-top: 2rem;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.1); }
+}
+
+.heart-animation {
+    animation: heartBeat 1s ease-in-out infinite;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 2rem;
+        margin: 1rem;
+    }
+    
+    .question-text, .final-text {
+        font-size: 2rem;
+    }
+    
+    .btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        min-width: 100px;
+    }
+    
+    .button-container {
+        gap: 1rem;
+    }
+}
+
+/* 3D Animation styles */
+.king-queen-animation {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    perspective: 1000px;
+}
+
+.character {
+    position: absolute;
+    width: 80px;
+    height: 120px;
+    transform-style: preserve-3d;
+}
+
+.king {
+    left: 35%;
+    animation: kissAnimation 1.5s ease-in-out infinite;
+}
+
+.queen {
+    right: 35%;
+    animation: kissAnimation 1.5s ease-in-out infinite;
+}
+
+/* 3D King Character */
+.king-3d {
+    position: relative;
+    width: 80px;
+    height: 120px;
+}
+
+.king-body {
+    width: 50px;
+    height: 70px;
+    background: linear-gradient(45deg, #4a90e2, #357abd);
+    border-radius: 25px 25px 10px 10px;
+    position: absolute;
+    left: 15px;
+    top: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.king-head {
+    width: 40px;
+    height: 40px;
+    background: #fdbcb4;
+    border-radius: 50%;
+    position: absolute;
+    left: 20px;
+    top: 5px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.king-crown {
+    width: 45px;
+    height: 20px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    position: absolute;
+    left: 17.5px;
+    top: -5px;
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.king-crown::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 12px solid #ffd700;
+}
+
+.king-arms {
+    width: 15px;
+    height: 40px;
+    background: #fdbcb4;
+    border-radius: 10px;
+    position: absolute;
+    top: 35px;
+}
+
+.king-arm-left {
+    left: 0;
+    animation: armWave 2s ease-in-out infinite;
+}
+
+.king-arm-right {
+    right: 0;
+}
+
+.king-legs {
+    width: 12px;
+    height: 30px;
+    background: #2c3e50;
+    border-radius: 6px;
+    position: absolute;
+    top: 95px;
+}
+
+.king-leg-left {
+    left: 18px;
+}
+
+.king-leg-right {
+    right: 18px;
+}
+
+/* 3D Queen Character */
+.queen-3d {
+    position: relative;
+    width: 80px;
+    height: 120px;
+}
+
+.queen-body {
+    width: 55px;
+    height: 75px;
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    border-radius: 27px 27px 40px 40px;
+    position: absolute;
+    left: 12px;
+    top: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.queen-head {
+    width: 40px;
+    height: 40px;
+    background: #fdbcb4;
+    border-radius: 50%;
+    position: absolute;
+    left: 20px;
+    top: 5px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.queen-crown {
+    width: 45px;
+    height: 25px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    position: absolute;
+    left: 17.5px;
+    top: -8px;
+    border-radius: 50% 50% 0 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.queen-crown::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #ff69b4;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff69b4;
+}
+
+.queen-hair {
+    width: 50px;
+    height: 35px;
+    background: #8b4513;
+    border-radius: 25px 25px 0 0;
+    position: absolute;
+    left: 15px;
+    top: 8px;
+}
+
+.queen-arms {
+    width: 15px;
+    height: 40px;
+    background: #fdbcb4;
+    border-radius: 10px;
+    position: absolute;
+    top: 35px;
+}
+
+.queen-arm-left {
+    left: -5px;
+    animation: queenArmMove 1s ease-in-out infinite;
+}
+
+.queen-arm-right {
+    right: -5px;
+}
+
+.queen-dress-bottom {
+    width: 70px;
+    height: 25px;
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    border-radius: 0 0 35px 35px;
+    position: absolute;
+    left: 5px;
+    top: 100px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+/* 3D Animations */
+@keyframes kingWave {
+    0%, 100% {
+        transform: rotateY(0deg) translateZ(0);
+    }
+    25% {
+        transform: rotateY(10deg) translateZ(10px);
+    }
+    50% {
+        transform: rotateY(0deg) translateZ(0);
+    }
+    75% {
+        transform: rotateY(-10deg) translateZ(10px);
+    }
+}
+
+@keyframes armWave {
+    0%, 100% {
+        transform: rotateZ(0deg);
+    }
+    50% {
+        transform: rotateZ(30deg);
+    }
+}
+
+@keyframes queenWalkToKing {
+    0% {
+        transform: translateX(0) translateY(0) rotateY(0deg) scale(1);
+        right: 20%;
+    }
+    25% {
+        transform: translateX(-45px) translateY(0) rotateY(5deg) scale(1);
+        right: 30%;
+    }
+    50% {
+        transform: translateX(-90px) translateY(0) rotateY(10deg) scale(1);
+        right: 40%;
+    }
+    75% {
+        transform: translateX(-135px) translateY(0) rotateY(5deg) scale(1);
+        right: 50%;
+    }
+    100% {
+        transform: translateX(-180px) translateY(0) rotateY(0deg) scale(1);
+        right: 55%;
+    }
+}
+
+@keyframes queenWalkingSteps {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes kingMoveToQueen {
+    0% {
+        transform: translateX(0) translateY(0) rotateY(0deg) scale(1);
+    }
+    100% {
+        transform: translateX(50px) translateY(0) rotateY(0deg) scale(1);
+    }
+}
+
+@keyframes kissAnimation {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.05);
+    }
+}
+
+@keyframes queenArmMove {
+    0%, 100% {
+        transform: rotateZ(0deg);
+    }
+    50% {
+        transform: rotateZ(-20deg);
+    }
+}
+
+@keyframes bounce3D {
+    0%, 100% {
+        transform: translateY(0) rotateX(0deg);
+    }
+    50% {
+        transform: translateY(-15px) rotateX(5deg);
+    }
+}
+
+/* Kissing position styles - removed since they're now default */
+
+/* Heart effects for kissing */
+.kiss-heart {
+    position: absolute;
+    font-size: 1.5rem;
+    color: #ff69b4;
+    animation: floatHeart 2s ease-out forwards;
+    pointer-events: none;
+    z-index: 15;
+}
+
+@keyframes floatHeart {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-30px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.5);
+    }
+}
+
+/* Romantic glow effect */
+.romantic-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255, 105, 180, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: romanticPulse 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes romanticPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+/* Follow-up screen styles */
+.follow-up-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    color: #ff6b6b;
+    margin-bottom: 2rem;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.text-input {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+    border: 3px solid #ff6b6b;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #4a4a4a;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.text-input:focus {
+    border-color: #ee5a24;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    transform: scale(1.02);
+}
+
+.text-input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.submit-btn {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-width: 150px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+}
+
+.celebration-container {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.celebration-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5rem;
+    color: #764ba2;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Responsive adjustments for input */
+@media (max-width: 768px) {
+    .follow-up-text {
+        font-size: 1.5rem;
+    }
+
+    .text-input {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+
+    .submit-btn {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+}

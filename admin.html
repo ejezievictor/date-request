@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 Queen's Responses Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 30px;
+        }
+        .session {
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+        .session-header {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .response {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #764ba2;
+            border-radius: 5px;
+        }
+        .final-answer {
+            background: #ffe6e6;
+            border: 2px solid #ff6b6b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .clear-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .clear-btn:hover {
+            background: #ee5a24;
+        }
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👑 Queen's Responses Admin Panel 👑</h1>
+        <div id="responses-container">
+            <div class="no-data">No responses yet. Waiting for your Queen to answer... 💖</div>
+        </div>
+        <button class="clear-btn" onclick="clearAllData()">Clear All Data</button>
+        <button class="clear-btn" onclick="refreshData()" style="background: #74b9ff;">Refresh</button>
+    </div>
+
+    <script>
+        function loadResponses() {
+            const container = document.getElementById('responses-container');
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('queenResponses_'));
+            
+            if (keys.length === 0) {
+                container.innerHTML = '<div class="no-data">No responses yet. Waiting for your Queen to answer... 💖</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            keys.forEach(key => {
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    const sessionDiv = document.createElement('div');
+                    sessionDiv.className = 'session';
+                    
+                    let html = `
+                        <div class="session-header">
+                            Session: ${data.sessionId}<br>
+                            Time: ${new Date(data.timestamp).toLocaleString()}<br>
+                            Browser: ${data.userAgent.substring(0, 100)}...
+                        </div>
+                    `;
+                    
+                    data.responses.forEach((response, index) => {
+                        html += `
+                            <div class="response">
+                                <strong>Q${response.question}:</strong> ${response.questionText}<br>
+                                <strong>Answer:</strong> ${response.answer}<br>
+                                <small>Time: ${new Date(response.timestamp).toLocaleString()}</small>
+                            </div>
+                        `;
+                    });
+                    
+                    if (data.finalAnswer) {
+                        html += `
+                            <div class="final-answer">
+                                <strong>🔥 SPICY FINAL ANSWER:</strong><br>
+                                "${data.finalAnswer}"
+                            </div>
+                        `;
+                    }
+                    
+                    sessionDiv.innerHTML = html;
+                    container.appendChild(sessionDiv);
+                } catch (e) {
+                    console.error('Error parsing data:', e);
+                }
+            });
+        }
+        
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all Queen responses?')) {
+                const keys = Object.keys(localStorage).filter(key => key.startsWith('queenResponses_'));
+                keys.forEach(key => localStorage.removeItem(key));
+                loadResponses();
+                alert('All data cleared!');
+            }
+        }
+        
+        function refreshData() {
+            loadResponses();
+        }
+        
+        // Load responses on page load
+        loadResponses();
+        
+        // Auto-refresh every 10 seconds
+        setInterval(loadResponses, 10000);
+    </script>
+</body>
+</html>

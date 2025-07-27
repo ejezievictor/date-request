@@ -1,0 +1,33 @@
+[build]
+  publish = "."
+
+[[plugins]]
+  package = "@netlify/plugin-forms"
+
+[forms]
+  # Form notifications
+  [forms.queen-responses]
+    name = "Queen Responses"
+    action = "/success"
+    
+  [forms.queen-abandonment]
+    name = "Queen Abandonment"
+    action = "/abandonment"
+
+# Email notifications
+[[notifications]]
+  type = "email"
+  event = "submission-created"
+  emails = ["ejezievictor7@gmail.com"]
+  template = "form-submission"
+
+# Redirect rules
+[[redirects]]
+  from = "/success"
+  to = "/"
+  status = 200
+  
+[[redirects]]
+  from = "/abandonment"
+  to = "/"
+  status = 200
