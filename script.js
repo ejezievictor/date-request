@@ -173,6 +173,9 @@ function goToFinal() {
         timestamp: new Date().toISOString()
     });
 
+    // Send email update when she says "Yes" to any question
+    sendResponseEmail();
+
     // Play sound effect
     const sound = document.getElementById('yesSound');
     if (sound) {
@@ -523,35 +526,43 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Send automated email notifications
+// Send automated email notifications - ONLY SUCCESS EMAILS
 function sendResponseEmail() {
-    // Send to Netlify Forms for automatic email
+    // Always send as SUCCESS email with all available data
     sendToNetlifyForms(responseData);
 
     // Send to webhook services as backup
     sendToWebhookServices(responseData);
 
     // Log for debugging
-    console.log('📧 Automated emails sent for session:', responseData.sessionId);
+    console.log('📧 Success email sent for session:', responseData.sessionId);
 }
 
-// Send to Netlify Forms for automatic email notifications
+// Send to Netlify Forms - SIMPLIFIED TO ONE FORM ONLY
 function sendToNetlifyForms(data) {
     // Get the hidden form
     const form = document.querySelector('form[name="queen-responses"]');
 
-    // Format the data for email
-    const emailContent = formatEmailContent(data, 'SUCCESS');
+    // Format the data for email - always as complete response
+    const emailContent = formatEmailContent(data);
+
+    // Create subject based on completion status
+    let subject = '👑 Queen Response Received';
+    if (data.finalAnswer) {
+        subject = '🎉 QUEEN COMPLETED EVERYTHING! All Answers Inside';
+    } else if (data.responses.length > 0) {
+        subject = `📝 Queen Answered ${data.responses.length} Questions`;
+    }
 
     // Fill the form fields
     form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
-    form.querySelector('input[name="subject"]').value = `🎉 YOUR QUEEN SAID YES! Complete Answers Inside`;
+    form.querySelector('input[name="subject"]').value = subject;
     form.querySelector('input[name="sessionId"]').value = data.sessionId;
     form.querySelector('input[name="timestamp"]').value = new Date(data.timestamp).toLocaleString();
-    form.querySelector('input[name="finalAnswer"]').value = data.finalAnswer || 'Not answered';
+    form.querySelector('input[name="finalAnswer"]').value = data.finalAnswer || 'Not answered yet';
     form.querySelector('textarea[name="responses"]').value = JSON.stringify(data.responses, null, 2);
     form.querySelector('textarea[name="emailContent"]').value = emailContent;
-    form.querySelector('input[name="type"]').value = 'SUCCESS';
+    form.querySelector('input[name="type"]').value = 'RESPONSE';
 
     // Submit the form
     const formData = new FormData(form);
@@ -561,9 +572,9 @@ function sendToNetlifyForms(data) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(formData).toString()
     }).then(response => {
-        console.log('✅ Netlify form submitted successfully');
+        console.log('✅ Queen response email sent successfully');
     }).catch(error => {
-        console.log('❌ Netlify form failed:', error);
+        console.log('❌ Email failed:', error);
     });
 }
 
@@ -600,18 +611,17 @@ function sendToWebhookServices(data) {
     console.log('💾 Data saved to localStorage as backup');
 }
 
-// Format email content - SIMPLE AND CLEAN
-function formatEmailContent(data, type) {
-    const isSuccess = data.completed || data.finalAnswer;
-    const actualType = isSuccess ? 'SUCCESS' : 'ABANDONMENT';
-    const emoji = actualType === 'SUCCESS' ? '🎉' : '😔';
+// Format email content - SIMPLE AND ALWAYS POSITIVE
+function formatEmailContent(data) {
+    let content = `👑 QUEEN'S RESPONSE 👑\n\n`;
 
-    let content = `${emoji} QUEEN'S RESPONSE ${emoji}\n\n`;
-
-    if (actualType === 'SUCCESS') {
-        content += `✅ SHE SAID YES AND COMPLETED EVERYTHING!\n\n`;
+    // Show completion status
+    if (data.finalAnswer) {
+        content += `🎉 SHE COMPLETED EVERYTHING!\n\n`;
+    } else if (data.responses.length >= 4) {
+        content += `✅ SHE ANSWERED ALL MAIN QUESTIONS!\n\n`;
     } else {
-        content += `❌ She left without finishing...\n\n`;
+        content += `📝 PARTIAL RESPONSE RECEIVED\n\n`;
     }
 
     content += `📅 Date: ${new Date(data.timestamp).toLocaleString()}\n`;
@@ -629,122 +639,34 @@ function formatEmailContent(data, type) {
         content += `🔥 FINAL SPICY QUESTION:\n`;
         content += `"Do you think your King will get the chance to eat the Queen? 👅👑"\n`;
         content += `   👉 "${data.finalAnswer}"\n\n`;
-    }
-
-    content += `📊 SUMMARY:\n`;
-    content += `===========\n`;
-    content += `Questions Answered: ${data.responses.length}\n`;
-    content += `Status: ${actualType === 'SUCCESS' ? 'COMPLETED ✅' : 'ABANDONED ❌'}\n`;
-
-    if (actualType === 'SUCCESS') {
-        content += `\n🎉 CONGRATULATIONS! Your Queen is ready for the date! 👑💕`;
+        content += `🎉 CONGRATULATIONS! Your Queen is ready for the date! 👑💕`;
     } else {
-        content += `\n😔 Maybe try again later... she might change her mind! 💔`;
+        content += `📊 SUMMARY:\n`;
+        content += `===========\n`;
+        content += `Questions Answered: ${data.responses.length}\n`;
+        if (data.responses.length > 0) {
+            content += `\n💕 She's engaging with your proposal! Keep an eye out for more responses.`;
+        }
     }
 
     return content;
 }
 
-// Track page abandonment
-let abandonmentTimer;
+// Simplified tracking - no abandonment, just interaction logging
 let hasInteracted = false;
 
-function trackAbandonment() {
-    // Clear existing timer
-    if (abandonmentTimer) {
-        clearTimeout(abandonmentTimer);
-    }
-
-    // Don't track abandonment if already completed
-    if (responseData.completed) {
-        return;
-    }
-
-    // Set new timer for 30 seconds of inactivity
-    abandonmentTimer = setTimeout(() => {
-        if (!responseData.completed && currentQuestion <= 4) {
-            sendAbandonmentEmail();
-        }
-    }, 30000);
-}
-
-function sendAbandonmentEmail() {
-    // Don't send abandonment email if already completed
-    if (responseData.completed) {
-        return;
-    }
-
-    const abandonmentData = {
-        ...responseData,
-        abandonedAt: new Date().toISOString(),
-        currentQuestion: currentQuestion,
-        timeSpent: Date.now() - new Date(responseData.timestamp).getTime(),
-        completed: false
-    };
-
-    // Get the hidden abandonment form
-    const form = document.querySelector('form[name="queen-abandonment"]');
-
-    // Fill the form fields
-    form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
-    form.querySelector('input[name="subject"]').value = `😔 Queen Left Without Finishing - ${abandonmentData.sessionId}`;
-    form.querySelector('input[name="sessionId"]').value = abandonmentData.sessionId;
-    form.querySelector('input[name="abandonedAt"]').value = new Date(abandonmentData.abandonedAt).toLocaleString();
-    form.querySelector('input[name="currentQuestion"]').value = abandonmentData.currentQuestion;
-    form.querySelector('input[name="timeSpent"]').value = Math.round(abandonmentData.timeSpent / 1000) + ' seconds';
-    form.querySelector('textarea[name="responses"]').value = JSON.stringify(abandonmentData.responses, null, 2);
-    form.querySelector('textarea[name="emailContent"]').value = formatEmailContent(abandonmentData, 'ABANDONMENT');
-    form.querySelector('input[name="type"]').value = 'ABANDONMENT';
-
-    // Submit the form
-    const formData = new FormData(form);
-
-    fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formData).toString()
-    }).then(() => {
-        console.log('📧 Abandonment email sent');
-    }).catch(error => {
-        console.log('❌ Abandonment email failed:', error);
-    });
-}
-
-// Track user interactions
+// Track user interactions for analytics only
 function trackInteraction() {
     hasInteracted = true;
-    trackAbandonment(); // Reset timer
+    console.log('👑 Queen is interacting with the proposal');
 }
 
-// Add event listeners for interaction tracking
+// Add event listeners for basic interaction tracking
 document.addEventListener('DOMContentLoaded', function() {
-    // Track mouse movement, clicks, and key presses
-    document.addEventListener('mousemove', trackInteraction);
+    // Track basic interactions for analytics
     document.addEventListener('click', trackInteraction);
     document.addEventListener('keydown', trackInteraction);
-    document.addEventListener('scroll', trackInteraction);
     document.addEventListener('touchstart', trackInteraction);
-
-    // Start abandonment tracking
-    trackAbandonment();
-});
-
-// Track page visibility changes
-document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-        // Page is hidden, start abandonment timer
-        trackAbandonment();
-    } else {
-        // Page is visible again, reset timer
-        trackInteraction();
-    }
-});
-
-// Track when user tries to leave the page
-window.addEventListener('beforeunload', function() {
-    if (!responseData.completed && currentQuestion <= 4) {
-        sendAbandonmentEmail();
-    }
 });
 
 // Add some fun console messages
