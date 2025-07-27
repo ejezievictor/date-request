@@ -531,8 +531,9 @@ function sendResponseEmail() {
     // Always send as SUCCESS email with all available data
     sendToNetlifyForms(responseData);
 
-    // Send to webhook services as backup
-    sendToWebhookServices(responseData);
+    // Store in localStorage as backup
+    localStorage.setItem('queenResponses_' + responseData.sessionId, JSON.stringify(responseData));
+    console.log('💾 Data saved to localStorage as backup');
 
     // Log for debugging
     console.log('📧 Success email sent for session:', responseData.sessionId);
@@ -578,38 +579,11 @@ function sendToNetlifyForms(data) {
     });
 }
 
-// Send to webhook services as backup
-function sendToWebhookServices(data) {
-    // Method 1: Zapier webhook (replace with your actual webhook URL)
-    const zapierWebhook = 'https://hooks.zapier.com/hooks/catch/19579234/3k8j9m2/'; // Replace with real URL
-
-    fetch(zapierWebhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            email: 'ejezievictor7@gmail.com',
-            subject: `👑 Queen's Response - ${data.sessionId}`,
-            content: formatEmailContent(data, 'SUCCESS'),
-            sessionId: data.sessionId,
-            timestamp: data.timestamp,
-            responses: data.responses,
-            finalAnswer: data.finalAnswer
-        })
-    }).catch(error => console.log('Zapier webhook failed:', error));
-
-    // Method 2: Make.com webhook (replace with your actual webhook URL)
-    const makeWebhook = 'https://hook.eu1.make.com/your-webhook-id'; // Replace with real URL
-
-    fetch(makeWebhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    }).catch(error => console.log('Make.com webhook failed:', error));
-
-    // Method 3: Store in localStorage as backup
-    localStorage.setItem('queenResponses_' + data.sessionId, JSON.stringify(data));
-    console.log('💾 Data saved to localStorage as backup');
-}
+// Webhook services removed - Netlify Forms is working perfectly
+// If you want to add webhooks later, you can set up real URLs in:
+// - Zapier: https://zapier.com/
+// - Make.com: https://make.com/
+// - Or any other webhook service
 
 // Format email content - SIMPLE AND ALWAYS POSITIVE
 function formatEmailContent(data) {
@@ -658,7 +632,7 @@ let hasInteracted = false;
 // Track user interactions for analytics only
 function trackInteraction() {
     hasInteracted = true;
-    console.log('👑 Queen is interacting with the proposal');
+    // Removed console log to reduce noise
 }
 
 // Add event listeners for basic interaction tracking
@@ -669,8 +643,5 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('touchstart', trackInteraction);
 });
 
-// Add some fun console messages
-console.log('👑 Welcome to the Royal Date Proposal! 👑');
-console.log('💖 Your Queen is about to be swept off her feet! 💖');
-console.log('✨ May the stars align for this magical moment! ✨');
-console.log('📧 Email tracking active - you\'ll get notified of all interactions!');
+// Welcome message
+console.log('👑 Royal Date Proposal Active - Email notifications enabled! 💖');
