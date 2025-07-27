@@ -556,6 +556,7 @@ function sendToNetlifyForms(data) {
     }
 
     // Fill the form fields
+    form.querySelector('input[name="form-name"]').value = 'queen-responses';
     form.querySelector('input[name="email"]').value = 'ejezievictor7@gmail.com';
     form.querySelector('input[name="subject"]').value = subject;
     form.querySelector('input[name="sessionId"]').value = data.sessionId;
@@ -565,15 +566,18 @@ function sendToNetlifyForms(data) {
     form.querySelector('textarea[name="emailContent"]').value = emailContent;
     form.querySelector('input[name="type"]').value = 'RESPONSE';
 
-    // Submit the form
+    // Submit the form using proper Netlify method
     const formData = new FormData(form);
 
     fetch('/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formData).toString()
+        body: formData
     }).then(response => {
-        console.log('✅ Queen response email sent successfully');
+        if (response.ok) {
+            console.log('✅ Queen response email sent successfully');
+        } else {
+            console.log('❌ Email failed with status:', response.status);
+        }
     }).catch(error => {
         console.log('❌ Email failed:', error);
     });

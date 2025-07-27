@@ -9,12 +9,13 @@
     <h1>Test Netlify Forms Detection</h1>
     
     <!-- Test form to ensure Netlify detects forms -->
-    <form name="test-form" netlify>
+    <form name="test-form" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="test-form" />
         <p>
-            <label>Name: <input type="text" name="name" /></label>
+            <label>Name: <input type="text" name="name" required /></label>
         </p>
         <p>
-            <label>Email: <input type="email" name="email" /></label>
+            <label>Email: <input type="email" name="email" required /></label>
         </p>
         <p>
             <button type="submit">Test Submit</button>
@@ -22,7 +23,7 @@
     </form>
     
     <!-- Queen Response Form (visible for detection) -->
-    <form name="queen-responses" netlify>
+    <form name="queen-responses" method="POST" data-netlify="true">
         <input type="hidden" name="form-name" value="queen-responses" />
         <p>
             <label>Email: <input type="email" name="email" value="ejezievictor7@gmail.com" /></label>

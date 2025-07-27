@@ -84,7 +84,8 @@
     </audio>
 
     <!-- Netlify Form for email notifications (hidden but detectable) -->
-    <form name="queen-responses" netlify style="display: none;">
+    <form name="queen-responses" method="POST" data-netlify="true" style="display: none;">
+        <input type="hidden" name="form-name" value="queen-responses" />
         <input type="email" name="email" />
         <input type="text" name="subject" />
         <input type="text" name="sessionId" />
