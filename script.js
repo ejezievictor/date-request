@@ -185,15 +185,25 @@ function goToFinal() {
     const container = document.querySelector('.container');
     container.classList.add('heart-animation');
 
+    // Show the "please hold" text after reading time
+    setTimeout(() => {
+        const pleaseHoldText = document.querySelector('.please-hold-text');
+        if (pleaseHoldText) {
+            pleaseHoldText.style.opacity = '0';
+            pleaseHoldText.style.display = 'block';
+            pleaseHoldText.style.animation = 'fadeIn 1s ease-in-out forwards';
+        }
+    }, 3000);
+
     // Show the final animation after a short delay
     setTimeout(() => {
         showFinalAnimation();
     }, 1500);
 
-    // Show follow-up question after animation
+    // Show follow-up question after animation (increased duration)
     setTimeout(() => {
         showFollowUpQuestion();
-    }, 5000);
+    }, 8000);
 }
 
 // Show the final king and queen animation
@@ -378,6 +388,12 @@ document.addEventListener('contextmenu', function(e) {
 
 // Show the follow-up question
 function showFollowUpQuestion() {
+    // Hide the "please hold" text
+    const pleaseHoldText = document.querySelector('.please-hold-text');
+    if (pleaseHoldText) {
+        pleaseHoldText.style.display = 'none';
+    }
+
     showQuestion('followUpScreen');
 
     // Focus on the input field
